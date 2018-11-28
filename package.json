@@ -1,5 +1,5 @@
 {
-  "name": "todoapp",
+  "name": "Timsan_proj",
   "version": "1.0.0",
   "description": "**Edit a file, create a new file, and clone from Bitbucket in under 2 minutes**",
   "main": "app.js",
@@ -24,10 +24,10 @@
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/walleyjs/dsproj.git"
+    "url": "git+https://github.com/walleyjs/Timsan_proj.git"
   },
   "bugs": {
-    "url": "https://github.com/walleyjs/dsproj/issues"
+    "url": "https://github.com/walleyjs/Timsan_proj.git/issues"
   },
-  "homepage": "https://github.com/walleyjs/dsproj#readme"
+  "homepage": "https://github.com/walleyjs/Timsan_proj.git#readme"
 }
