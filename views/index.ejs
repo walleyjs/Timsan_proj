@@ -1,0 +1,24 @@
+<% include partials/header%>
+    <fieldset id="allhobby_fieldset"> 
+      <h1><%=usertodo.username%> these are some of your hobbies:</h1>  
+        <%usertodo.todo.forEach(function(todo){%>
+        <div id="hobby_fieldset">
+                <div>
+            <img src="../imgs/arr.svg" alt="landding img" width="20px" class="userimg">   
+                    </div>
+                <%=todo.hobby%>
+                <span id="date">Date Added:<%=todo.date.toDateString()%></span>
+                
+    </div>
+        <%})%>
+    <form action="/todoapp/<%=usertodo._id%>" method="POST">
+    <ul id="hobbyForm">
+            <h2 id="hobbytop">ADD A NEW HOBBY:</h2>    
+            <textarea name="hobby" id="" cols="" rows="" placeholder="hobbies" class="hobbyinput commentinput2" ></textarea>
+            <li><input type="submit" value="Add to hobbies" id="hobbybut"></li>
+        </ul>
+        </form>
+    </fieldset>
+<% include partials/footer%>
+
+
