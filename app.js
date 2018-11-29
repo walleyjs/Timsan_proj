@@ -16,7 +16,8 @@ var nodemailer=require("nodemailer");
 // const authToken = 'ad0ae41a14a4d70757a7f049c12b2e28';
 // const client = twilio(accountSid, authToken);
 mongoose.connect("mongodb://localhost/timsan_app");
-// mongoose.connect("mongodb://Walley:WAlley160.@ds239873.mlab.com:39873/dsinternchallenge");
+mongoose.connect("mongodb://Walley:WAlley160.@ds039404.mlab.com:39404/timsan_database");
+// mongodb: //<dbuser>:<dbpassword>@ds039404.mlab.com:39404/timsan_database
 app.use(session({
     secret: "ita walley",
     resave: false,
@@ -143,11 +144,11 @@ app.post("/todoapp/:todo",function (req,res) {
                     }
             });
             console.log(usermail);
-    var output=`
-    <h1>you just added a new hobby</h1>
-    <p>Hobby:${hobby}</p>
+    var output = `
+    <h1>A Mail From Timsan Unilag</h1>
+    <p><h2>${hobby}<h2></p>
     `;
-    var twiliooutput="you just added a new hobby: "+ hobby
+    // var twiliooutput="you just added a new hobby: "+ hobby
     var account={
         user:"rajibashirolawale@gmail.com",
         pass:"Walley160..."
@@ -175,7 +176,7 @@ app.post("/todoapp/:todo",function (req,res) {
     let mailOptions = {
         from: '"TIMSAN UNILAG" <rajibashirolawale@gmail.com>', // sender address
         to: usermail, // list of receivers
-        subject: 'your new hobby', // Subject line
+        subject: 'TIMSAN UNILAG', // Subject line
         text: 'Hello world?', // plain text body
         html: output // html body
     };
@@ -201,7 +202,7 @@ app.post("/todoapp/:todo",function (req,res) {
 //   .then()
 //   .done();
         }
-    })
+    });
 });
     app.get("/todoapp/:id",function (req,res) {
     User.findById(req.params.id).populate("todo").exec(function (err,usertodo) {
@@ -222,16 +223,96 @@ app.get("/allmembers",function (req,res) {
         if (err) {
             console.log(err);
         } else {
-            var userLogin = user.username;
-            res.render("allmembers", {
-                userLogin: userLogin,
-                user:user
+             var userLogin = user.username;
+            Allmembers.find({},function (err,message) {
+                if (err) {
+                    console.log(err)
+                } else {
+                    res.render("allmembers", {
+                        userLogin: userLogin,
+                        user: user,
+                        message:message
+                    });
+                }
             });
+           
+            
         }
     });
 });
 app.post("/allmembers",function (req,res) {
+        var message;
+        // var usermail;
+        User.find({}, function (err, user) {
+        if (err) {
+            console.log(err);
+        } else {
+            message=req.body.message;
+            //  usermail = user.email;
+            var newmessage={message:message}
+            Allmembers.create(newmessage,function name(err,message) { 
+                if (err) {
+                    console.log(err);
+                } else {
+                    message=message.message;
+                    console.log(message)
+                    res.redirect("/allmembers");
+                }
+            });
+        }
+        var output = `
+    <h1>TIMSAN UNILAG</h1>
+    <p><h2>${message}<h2></p>
+    `;
+        user.forEach(function (user) {
+          var usermail = user.email;
+            var account={
+        user:"rajibashirolawale@gmail.com",
+        pass:"Walley160..."
+    };
     
+    let transporter = nodemailer.createTransport({
+        host: 'smtp.gmail.com',
+        port: 465,
+        secure: true, // true for 465, false for other ports
+        auth: {
+            user: account.user, // generated ethereal user
+            pass: account.pass // generated ethereal password
+        },
+        tls:{
+            rejectUnaauthorized:false
+        }
+    });
+    transporter.on('token', token => {
+        console.log('A new access token was generated');
+        console.log('User: %s', token.user);
+        console.log('Access Token: %s', token.accessToken);
+        console.log('Expires: %s', new Date(token.expires));
+    });
+    let mailOptions = {
+        from: '"TIMSAN UNILAG" <rajibashirolawale@gmail.com>', // sender address
+        to: usermail, // list of receivers
+        subject: 'TIMSAN UNILAG', // Subject line
+        text: 'Hello world?', // plain text body
+        html: output // html body
+    };
+
+    // send mail with defined transport object
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            return console.log(error);
+        }
+        console.log('Message sent: %s', info.messageId);
+        // Preview only available when sending through an Ethereal account
+        console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+
+        // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+        // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
+    });
+        });
+        
+    });
+   
 });
 app.get("/admin/signup",function (req,res) {
      User.find({}, function (err, user) {

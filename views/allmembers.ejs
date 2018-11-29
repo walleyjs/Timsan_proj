@@ -1,13 +1,13 @@
 <% include partials/header%>
 <fieldset id="allhobby_fieldset"> 
-      <h1><%=usertodo.username%> these are some of your hobbies:</h1>  
-        <%usertodo.todo.forEach(function(todo){%>
+      <h1> these are some of your hobbies:</h1>  
+        <%message.forEach(function(message){%>
         <div id="hobby_fieldset">
                 <div>
             <img src="../imgs/arr.svg" alt="landding img" width="20px" class="userimg">   
                     </div>
-                <%=todo.hobby%>
-                <span id="date">Date Added:<%=todo.date.toDateString()%></span>
+                <%=message.message%>
+                <span id="date">Date Added:<%=message.date.toDateString()%></span>
                 
     </div>
         <%})%>
