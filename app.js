@@ -1,9 +1,15 @@
-var express=require("express");
-var app= express();
-var bodyParser=require("body-parser");
-var mongoose=require("mongoose");
+const express=require("express");
+const app= express();
+const bodyParser=require("body-parser");
+const localStrategy = require("passport-local");
+const session = require("express-session");
+const passportLocalMongoose = require("passport-local-mongoose");
+const passport=require('passport');
+const mongoose=require("mongoose");
 var Todo=require("./models/todo.js");
 var User=require("./models/user.js");
+var Admin = require("./models/admin.js");
+var Allmembers = require("./models/allmembers.js");
 var nodemailer=require("nodemailer");
 // var twilio=require("twilio");
 // const accountSid = 'ACc17442b0ab36cf4106de614b5693f943';
@@ -11,6 +17,16 @@ var nodemailer=require("nodemailer");
 // const client = twilio(accountSid, authToken);
 mongoose.connect("mongodb://localhost/timsan_app");
 // mongoose.connect("mongodb://Walley:WAlley160.@ds239873.mlab.com:39873/dsinternchallenge");
+app.use(session({
+    secret: "ita walley",
+    resave: false,
+    saveUninitialized: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new localStrategy(Admin.authenticate()));
+passport.serializeUser(Admin.serializeUser());
+passport.deserializeUser(Admin.deserializeUser());
 app.set("view engine","ejs");
 app.set("views","views");
 app.use(bodyParser.urlencoded({extended:true}));
@@ -85,7 +101,7 @@ app.get("/user/login",function (req,res) {
         else{
             user.forEach(user => {
             userLogin=user.username;
-            console.log("==========sippose not in db=====");
+            
              console.log("here")
             console.log(user);
             res.redirect("/todoapp/"+ user.id );    
@@ -157,7 +173,7 @@ app.post("/todoapp/:todo",function (req,res) {
             });
     // setup email data with unicode symbols
     let mailOptions = {
-        from: '"Hobby adddds" <rajibashirolawale@gmail.com>', // sender address
+        from: '"TIMSAN UNILAG" <rajibashirolawale@gmail.com>', // sender address
         to: usermail, // list of receivers
         subject: 'your new hobby', // Subject line
         text: 'Hello world?', // plain text body
@@ -201,8 +217,68 @@ app.post("/todoapp/:todo",function (req,res) {
         }
     });
 });
-app.get("/logout", function (req, res) {
-    // req.logout();
+app.get("/allmembers",function (req,res) {
+    User.find({}, function (err, user) {
+        if (err) {
+            console.log(err);
+        } else {
+            var userLogin = user.username;
+            res.render("allmembers", {
+                userLogin: userLogin,
+                user:user
+            });
+        }
+    });
+});
+app.post("/allmembers",function (req,res) {
+    
+});
+app.get("/admin/signup",function (req,res) {
+     User.find({}, function (err, user) {
+         if (err) {
+             console.log(err);
+         } else {
+             var userLogin = user.username;
+              res.render("adminsignup", {
+                 userLogin: userLogin
+             });
+         }
+     });
+   
+});
+app.post("/admin/signup",function (req,res) {
+    Admin.register(new Admin({username:req.body.username}),req.body.password,function (err,admin) {
+        if (err) {
+            console.log(err);
+            console.log("================admin err ===");
+            res.render("adminsignup");
+        } else {
+            passport.authenticate("local")(req, res, () => {
+                res.redirect("/allmembers");
+                console.log("registerd");
+                // console.log(req.user);
+            });
+        }
+    })
+});
+app.get("/admin/signin",function (req,res) {
+    User.find({}, function (err, user) {
+        if (err) {
+            console.log(err);
+        } else {
+            var userLogin = user.username;
+            res.render("adminsignin", {
+                userLogin: userLogin
+            });
+        }
+    });
+});
+app.post("/admin/signin", passport.authenticate("local", {
+    successRedirect: "/allmembers",
+    failureRedirect: "/admin/signin"
+}), (req, res) => {});
+app.get("/logout", (req, res) => {
+    req.logout();
     res.redirect("/");
 });
 // function escapeRegex(text) {

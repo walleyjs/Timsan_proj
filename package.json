@@ -1,5 +1,5 @@
 {
-  "name": "Timsan_proj",
+  "name": "timsan_proj",
   "version": "1.0.0",
   "description": "**Edit a file, create a new file, and clone from Bitbucket in under 2 minutes**",
   "main": "app.js",
