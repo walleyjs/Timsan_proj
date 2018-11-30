@@ -18,9 +18,8 @@ var indexRoute = require("./routes/indexRoute");
 // const accountSid = 'ACc17442b0ab36cf4106de614b5693f943';
 // const authToken = 'ad0ae41a14a4d70757a7f049c12b2e28';
 // const client = twilio(accountSid, authToken);
-mongoose.connect("mongodb://localhost/timsan_app");
-// mongoose.connect("mongodb://Walley:WAlley160.@ds039404.mlab.com:39404/timsan_database");
-// mongodb: //<dbuser>:<dbpassword>@ds039404.mlab.com:39404/timsan_database
+// mongoose.connect("mongodb://localhost/timsan_app");
+mongoose.connect("mongodb://Walley:WAlley160.@ds039404.mlab.com:39404/timsan_database");
 app.use(session({
     secret: "ita walley",
     resave: false,
