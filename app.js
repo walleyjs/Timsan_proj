@@ -16,7 +16,7 @@ var nodemailer=require("nodemailer");
 // const authToken = 'ad0ae41a14a4d70757a7f049c12b2e28';
 // const client = twilio(accountSid, authToken);
 mongoose.connect("mongodb://localhost/timsan_app");
-mongoose.connect("mongodb://Walley:WAlley160.@ds039404.mlab.com:39404/timsan_database");
+// mongoose.connect("mongodb://Walley:WAlley160.@ds039404.mlab.com:39404/timsan_database");
 // mongodb: //<dbuser>:<dbpassword>@ds039404.mlab.com:39404/timsan_database
 app.use(session({
     secret: "ita walley",
@@ -32,11 +32,7 @@ app.set("view engine","ejs");
 app.set("views","views");
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(express.static("./public"));
-
 app.set("port",process.env.PORT || 5000);
-
-
-
 app.get("/",function (req,res) {
     User.find({},function (err,user) {
         if (err) {
@@ -48,7 +44,7 @@ app.get("/",function (req,res) {
     })
     
 });
-app.get("/user/signup",function (req,res) {
+app.get("/user/signup",isLoggedIn,function(req, res) {
    User.find({},function (err,user) {
         if (err) {
             console.log(err);
@@ -60,7 +56,7 @@ app.get("/user/signup",function (req,res) {
         
 });
 
-app.post("/user/signup",function (req,res) {
+app.post("/user/signup",isLoggedIn,function(req, res) {
     
     // var newUser=new User({
     //     username:req.body.username
@@ -87,7 +83,7 @@ app.post("/user/signup",function (req,res) {
 // app.get("/user/login",function (req,res) {
 //         res.render("login");
 // });
-app.get("/user/login",function (req,res) { 
+app.get("/user/login",isLoggedIn,function(req, res) {
     var password=req.query.password;
     var username=req.query.username;
     var userLogin;
@@ -119,9 +115,8 @@ app.get("/user/login",function (req,res) {
         );
  
 
-app.post("/todoapp/:todo",function (req,res) {
+app.post("/todoapp/:todo",isLoggedIn,function(req, res) {
     var hobby;
-    
     var usermail;
     var usernumber;
     User.findById(req.params.todo,function (err,user) {
@@ -145,8 +140,8 @@ app.post("/todoapp/:todo",function (req,res) {
             });
             console.log(usermail);
     var output = `
-    <h1>A Mail From Timsan Unilag</h1>
-    <p><h2>${hobby}<h2></p>
+    <b><h2>Hello ${user.username}<h2></b>
+    <p><i><h3>${hobby}</h3></i></p>
     `;
     // var twiliooutput="you just added a new hobby: "+ hobby
     var account={
@@ -204,7 +199,7 @@ app.post("/todoapp/:todo",function (req,res) {
         }
     });
 });
-    app.get("/todoapp/:id",function (req,res) {
+    app.get("/todoapp/:id",isLoggedIn,function(req, res) {
     User.findById(req.params.id).populate("todo").exec(function (err,usertodo) {
         var userLogin=usertodo.username;
         if (err) {
@@ -218,7 +213,7 @@ app.post("/todoapp/:todo",function (req,res) {
         }
     });
 });
-app.get("/allmembers",function (req,res) {
+app.get("/allmembers",isLoggedIn,function(req, res) {
     User.find({}, function (err, user) {
         if (err) {
             console.log(err);
@@ -240,7 +235,7 @@ app.get("/allmembers",function (req,res) {
         }
     });
 });
-app.post("/allmembers",function (req,res) {
+app.post("/allmembers",isLoggedIn,function(req, res) {
         var message;
         // var usermail;
         User.find({}, function (err, user) {
@@ -261,8 +256,8 @@ app.post("/allmembers",function (req,res) {
             });
         }
         var output = `
-    <h1>TIMSAN UNILAG</h1>
-    <p><h2>${message}<h2></p>
+    <b><h2>Hello ${user.username}<h2></b>
+    <p><i><h3>${message}</h3></i></p>
     `;
         user.forEach(function (user) {
           var usermail = user.email;
@@ -345,7 +340,7 @@ app.post("/admin/signup",function (req,res) {
 app.get("/admin/signin",function (req,res) {
     User.find({}, function (err, user) {
         if (err) {
-            console.log(err);
+            console.log(err)
         } else {
             var userLogin = user.username;
             res.render("adminsignin", {
@@ -358,10 +353,21 @@ app.post("/admin/signin", passport.authenticate("local", {
     successRedirect: "/allmembers",
     failureRedirect: "/admin/signin"
 }), (req, res) => {});
-app.get("/logout", (req, res) => {
+app.get("/userlogout", (req, res) => {
+    // req.logout();
+    res.redirect("/user/login");
+});
+app.get("/adminlogout", (req, res) => {
     req.logout();
     res.redirect("/");
 });
+function isLoggedIn(req, res, next) {
+    if (req.isAuthenticated()) {
+        console.log(req.isAuthenticated());
+        return next();
+    }
+    res.redirect("/admin/signin");
+};
 // function escapeRegex(text) {
 //     return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
 // };

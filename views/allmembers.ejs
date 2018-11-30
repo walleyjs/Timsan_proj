@@ -1,4 +1,27 @@
-<% include partials/header%>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>TIMSAN MAILING APP</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="/style.css" />
+</head>
+<ul id="nav">
+        <li class="list list1"><a href="/">Home Page</a></li>
+        <%if(!userLogin){%>
+            <li class="list list2"><a href="/user/login">Login</a></li>
+            <li class="list list3"><a href="/user/signup">Signup</a></li>
+            <li class="list list3"><a href="/admin/signin">Admin</a></li>
+            <li class="list list4"><a href="/adminlogout">Adminlogout</a></li> 
+       <% }else{%>
+            <li class="list list4"><a href='#'><%=userLogin.toLowerCase()%></a></li> 
+            <li class="list list4"><a href='/allmembers'>All</a></li>             
+            <li class="list list4"><a href="/userlogout">logout</a></li>
+            <li class="list list4"><a href="/adminlogout">Adminlogout</a></li>          
+        <%}%>
+    </ul>
+<body>
 <fieldset id="allhobby_fieldset"> 
       <h1> these are some of your hobbies:</h1>  
         <%message.forEach(function(message){%>

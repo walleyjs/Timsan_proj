@@ -1,6 +1,6 @@
 <% include partials/header%>
     <fieldset id="allhobby_fieldset"> 
-      <h2>personal messages sent to mr/mrs <%=usertodo.username%> </h2>  
+      <h2>Personal Messages Sent To <%=usertodo.username%> </h2>  
         <%usertodo.todo.forEach(function(todo){%>
         <div id="hobby_fieldset">
                 <div>
@@ -13,11 +13,12 @@
         <%})%>
     <form action="/todoapp/<%=usertodo._id%>" method="POST">
     <ul id="hobbyForm">
-            <h2 id="hobbytop">ADD A NEW HOBBY:</h2>    
+            <h2 id="hobbytop">Send A New Message:</h2>    
             <textarea name="hobby" id="" cols="" rows="" placeholder="hobbies" class="hobbyinput commentinput2" ></textarea>
-            <li><input type="submit" value="Add to hobbies" id="hobbybut"></li>
+            <li><input type="submit" value="Send Message" id="hobbybut"></li>
         </ul>
         </form>
+        <li><a href="/userlogout" >logout</a></li>
     </fieldset>
 <% include partials/footer%>
 
