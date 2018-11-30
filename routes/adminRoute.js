@@ -103,7 +103,7 @@ router.post("/allmembers",isLoggedIn,function(req, res) {
     });
    
 });
-router.get("/admin/signup",function (req,res) {
+router.get("/admin/walley",function (req,res) {
      User.find({}, function (err, user) {
          if (err) {
              console.log(err);
