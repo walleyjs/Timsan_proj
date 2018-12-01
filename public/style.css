@@ -70,7 +70,7 @@ li a {
 }
 /* landing */
 #lastback_img{
-    height: 632px;
+    height: 630px;
     background-image:url("imgs/timsanlogo.jpg");
     background-attachment: fixed;
     background-position: center;
@@ -82,10 +82,10 @@ li a {
     background-color:#362c2999;
     flex-direction: column;
     width: 100%;
-    height:535px;
+    height:630px;
     color: black;
     align-items: center;
-    padding: 100px 0px 0px 0px;
+    padding: 30px 0px 0px 0px;
     /* padding: 0px 0px 0px 0px; */
      /* z-index:2;   */
 }
@@ -132,6 +132,7 @@ padding: 0px 0px 15px 0px;
     border-radius: 5px;
     background-color: white;
     margin: 0px 20px 20px 20px;
+    overflow: scroll;
 }
 
 #hobbyForm {

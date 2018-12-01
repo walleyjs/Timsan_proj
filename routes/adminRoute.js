@@ -3,6 +3,7 @@ var router = express.Router();
 var passport=require("passport");
 var nodemailer = require("nodemailer");
 var Allmembers = require("../models/allmembers.js");
+var ejs=require("ejs");
 var Todo = require("../models/todo.js");
 var User = require("../models/user.js");
 var Admin = require("../models/admin.js");
@@ -49,12 +50,11 @@ router.post("/allmembers",isLoggedIn,function(req, res) {
                 }
             });
         }
-        var output = `
-    <b><h2>Hello ${user.username}<h2></b>
-    <p><i><h3>${message}</h3></i></p>
-    `;
+        var mailMessage=message;
+       
         user.forEach(function (user) {
           var usermail = user.email;
+            var name = user.username;
             var account={
         user:"rajibashirolawale@gmail.com",
         pass:"Walley160..."
@@ -78,12 +78,16 @@ router.post("/allmembers",isLoggedIn,function(req, res) {
         console.log('Access Token: %s', token.accessToken);
         console.log('Expires: %s', new Date(token.expires));
     });
+    ejs.renderFile("views/templatedmail.ejs", {mailMessage:mailMessage,name:name}, function (err, data) {
+                if (err) {
+                     console.log(err);
+                    } else {
     let mailOptions = {
         from: '"TIMSAN UNILAG" <rajibashirolawale@gmail.com>', // sender address
         to: usermail, // list of receivers
         subject: 'TIMSAN UNILAG', // Subject line
         text: 'Hello world?', // plain text body
-        html: output // html body
+        html: data // html body
     };
 
     // send mail with defined transport object
@@ -97,6 +101,10 @@ router.post("/allmembers",isLoggedIn,function(req, res) {
 
         // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
         // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
+        
+    });
+    }
+
     });
         });
         

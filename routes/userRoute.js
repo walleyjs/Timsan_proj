@@ -6,6 +6,7 @@ var Todo = require("../models/todo.js");
 var User = require("../models/user.js");
 var Admin = require("../models/admin.js");
 var Allmembers = require("../models/allmembers.js");
+var ejs=require("ejs");
 router.get("/user/signup", isLoggedIn, function (req, res) {
     User.find({}, function (err, user) {
         if (err) {
@@ -110,10 +111,8 @@ router.post("/todoapp/:todo", isLoggedIn, function (req, res) {
                 }
             });
             console.log(usermail);
-            var output = `
-    <b><h2>Hello ${user.username}<h2></b>
-    <p><i><h3>${hobby}</h3></i></p>
-    `;
+            var mailMessage = hobby;
+            var name=user.username;
             // var twiliooutput="you just added a new hobby: "+ hobby
             var account = {
                 user: "rajibashirolawale@gmail.com",
@@ -139,12 +138,16 @@ router.post("/todoapp/:todo", isLoggedIn, function (req, res) {
                 console.log('Expires: %s', new Date(token.expires));
             });
             // setup email data with unicode symbols
+            ejs.renderFile("views/templatedmail.ejs", {mailMessage:mailMessage,name:name}, function (err, data) {
+                if (err) {
+                     console.log(err);
+                    } else {
             let mailOptions = {
                 from: '"TIMSAN UNILAG" <rajibashirolawale@gmail.com>', // sender address
                 to: usermail, // list of receivers
                 subject: 'TIMSAN UNILAG', // Subject line
                 text: 'Hello world?', // plain text body
-                html: output // html body
+                html: data // html body
             };
 
             // send mail with defined transport object
@@ -159,6 +162,9 @@ router.post("/todoapp/:todo", isLoggedIn, function (req, res) {
                 // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
                 // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
             });
+            }
+
+            });
             //     client.messages
             //   .create({
             //      body: twiliooutput,
@@ -167,6 +173,20 @@ router.post("/todoapp/:todo", isLoggedIn, function (req, res) {
             //    })
             //   .then()
             //   .done();
+        }
+    });
+});
+router.get("/todoapp/templatedmail/:id",function (req,res) {
+    User.findById(req.params.id).populate("todo").exec(function (err, usertodo) {
+        var userLogin = usertodo.username;
+        if (err) {
+            console.log(err);
+        } else {
+            // console.log(usertodo);
+            res.render("templatedmail", {
+                usertodo: usertodo,
+                userLogin: userLogin
+            })
         }
     });
 });
